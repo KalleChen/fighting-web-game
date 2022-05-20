@@ -1,8 +1,10 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
-const GRAVITY = 0.5
+const GRAVITY = 0.9
 const X_VELOCITY = 8
-const Y_VELOCITY = -18
+const Y_VELOCITY = -20
+const LIFE_POINT = 10
+const DAMAGE = 1
 
 // Setup canvas
 canvas.width = window.innerWidth
@@ -27,6 +29,9 @@ class Sprite {
         y: this.position.y + this.height / 4,
       },
     }
+    this.attackable = false
+    this.attacking = false
+    this.lifePoint = LIFE_POINT
   }
 
   draw() {
@@ -39,6 +44,17 @@ class Sprite {
       this.attackBox.width,
       this.attackBox.height
     )
+  }
+
+  attack(other) {
+    if (this.isAttacking) return
+    this.attacking = true
+    if (this.attackable) {
+      other.lifePoint -= DAMAGE
+    }
+    setTimeout(() => {
+      this.attacking = false
+    }, 300)
   }
 
   update() {
@@ -65,7 +81,7 @@ class Sprite {
 
 const player = new Sprite({
   position: {
-    x: 0,
+    x: canvas.width / 17,
     y: 0,
   },
   velocity: {
@@ -78,7 +94,7 @@ const player = new Sprite({
 
 const enemy = new Sprite({
   position: {
-    x: 400,
+    x: (canvas.width / 17) * 15,
     y: 0,
   },
   velocity: {
@@ -104,35 +120,60 @@ const keys = {
   },
 }
 
+const checkAttackRange = (p1, p2) => {
+  const XValid =
+    (p1.attackBox.position.x <= p2.position.x &&
+      p1.attackBox.position.x + p1.attackBox.width >= p2.position.x) ||
+    (p1.attackBox.position.x <= p2.position.x + p2.width &&
+      p1.attackBox.position.x + p1.attackBox.width >= p2.position.x + p2.width)
+  const YValid = p1.attackBox.position.y + p1.attackBox.height >= p2.position.y
+  return XValid && YValid
+}
+
 const animate = () => {
   window.requestAnimationFrame(animate)
   context.fillStyle = 'black'
   context.fillRect(0, 0, canvas.width, canvas.height)
+  gsap.to('#left_life', {
+    width: `${(player.lifePoint / LIFE_POINT) * 100}%`,
+  })
+  gsap.to('#right_life', {
+    width: `${(enemy.lifePoint / LIFE_POINT) * 100}%`,
+  })
   player.update()
   enemy.update()
 
-  if (keys.a.pressed && player.lastKey === 'a') {
+  // player movement
+  if (keys.a.pressed && player.lastKey !== 'd') {
     player.velocity.x = -X_VELOCITY
-  } else if (keys.d.pressed && player.lastKey === 'd') {
+    player.attackBox.direction = 0
+  } else if (keys.d.pressed && player.lastKey !== 'a') {
     player.velocity.x = X_VELOCITY
+    player.attackBox.direction = 1
   } else {
     player.velocity.x = 0
   }
-
-  if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
+  // enemy movement
+  if (keys.ArrowLeft.pressed && enemy.lastKey !== 'ArrowRight') {
     enemy.velocity.x = -X_VELOCITY
-  } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
+    enemy.attackBox.direction = 0
+  } else if (keys.ArrowRight.pressed && enemy.lastKey !== 'ArrowLeft') {
     enemy.velocity.x = X_VELOCITY
+    enemy.attackBox.direction = 1
   } else {
     enemy.velocity.x = 0
   }
 
-  if (player.position.x >= enemy.position.x + enemy.width) {
-    player.attackBox.direction = 0
-    enemy.attackBox.direction = 1
+  // sprite attack check
+  if (checkAttackRange(player, enemy)) {
+    player.attackable = true
   } else {
-    player.attackBox.direction = 1
-    enemy.attackBox.direction = 0
+    player.attackable = false
+  }
+  if (checkAttackRange(enemy, player)) {
+    enemy.attackable = true
+  } else {
+    enemy.attackable = false
   }
 }
 
@@ -154,6 +195,9 @@ window.addEventListener('keydown', (event) => {
         player.jumpTimes++
       }
       break
+    case 's':
+      player.attack(enemy)
+      break
     case 'ArrowLeft':
       keys.ArrowLeft.pressed = true
       enemy.lastKey = 'ArrowLeft'
@@ -168,6 +212,9 @@ window.addEventListener('keydown', (event) => {
         enemy.jumpTimes++
       }
       break
+    case 'ArrowDown':
+      enemy.attack(player)
+      break
   }
 })
 
@@ -175,15 +222,19 @@ window.addEventListener('keyup', (event) => {
   switch (event.key) {
     case 'd':
       keys.d.pressed = false
+      player.lastKey = null
       break
     case 'a':
       keys.a.pressed = false
+      player.lastKey = null
       break
     case 'ArrowLeft':
       keys.ArrowLeft.pressed = false
+      enemy.lastKey = null
       break
     case 'ArrowRight':
       keys.ArrowRight.pressed = false
+      enemy.lastKey = null
       break
   }
 })

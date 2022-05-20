@@ -1,3 +1,6 @@
 {
-  "extends": ["kalle"]
+  "extends": ["kalle"],
+  "globals": {
+    "gsap": true
+  }
 }
