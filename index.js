@@ -1,4 +1,25 @@
-const player = new Sprite({
+const background = new Sprite({
+  position: {
+    x: 0,
+    y: 0,
+  },
+  imageSrc: './img/background.png',
+  width: canvas.width,
+  height: canvas.height,
+})
+
+const shop = new Sprite({
+  position: {
+    x: (canvas.width * 3) / 5,
+    y: canvas.height / 6,
+  },
+  imageSrc: './img/shop.png',
+  width: canvas.width * 1.8,
+  height: canvas.height / 1.5,
+  frameMax: 6,
+})
+
+const player = new Player({
   position: {
     x: canvas.width / 17,
     y: 0,
@@ -7,11 +28,12 @@ const player = new Sprite({
     x: 0,
     y: 0,
   },
+  imageSrc: './img/shop.png',
   color: 'red',
   direction: 1,
 })
 
-const enemy = new Sprite({
+const enemy = new Player({
   position: {
     x: (canvas.width / 17) * 15,
     y: 0,
@@ -20,6 +42,7 @@ const enemy = new Sprite({
     x: 0,
     y: 0,
   },
+  imageSrc: './img/shop.png',
   color: 'blue',
   direction: 0,
 })
@@ -34,6 +57,8 @@ const animate = () => {
   gsap.to('#right_life', {
     width: `${(enemy.lifePoint / LIFE_POINT) * 100}%`,
   })
+  background.update()
+  shop.update()
   player.update()
   enemy.update()
 

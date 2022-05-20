@@ -58,7 +58,7 @@ const checkEnd = (p1, p2) => {
   } else if (p2.lifePoint <= 0) {
     resultBlock.innerHTML = 'Player 1 Win'
     end = true
-  } else if (time <= 0) {
+  } else if (time < 0) {
     resultBlock.innerHTML = 'Time Out'
     end = true
   } else {
