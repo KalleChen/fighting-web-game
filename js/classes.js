@@ -1,5 +1,12 @@
 class Sprite {
-  constructor({ position, imageSrc, width, height, frameMax = 1 }) {
+  constructor({
+    position,
+    imageSrc,
+    width,
+    height,
+    frameMax = 1,
+    offset = { x: 0, y: 0 },
+  }) {
     this.position = position
     this.image = new Image()
     this.image.src = imageSrc
@@ -8,7 +15,8 @@ class Sprite {
     this.frameMax = frameMax
     this.currentFrame = 0
     this.frameElapsed = 0
-    this.framesHold = 10
+    this.framesHold = 5
+    this.offset = offset
   }
 
   draw() {
@@ -18,8 +26,8 @@ class Sprite {
       0,
       this.image.width / this.frameMax,
       this.image.height,
-      this.position.x,
-      this.position.y,
+      this.position.x - this.offset.x,
+      this.position.y + this.offset.y,
       this.width / this.frameMax,
       this.height
     )
@@ -36,63 +44,133 @@ class Sprite {
   }
 
   update() {
-    this.frameAnimation()
     this.draw()
+    this.frameAnimation()
   }
 }
 
 class Player extends Sprite {
-  constructor({ position, imageSrc, velocity, direction, color }) {
-    super({ position, imageSrc })
-    this.height = canvas.height / 3.5
-    this.width = canvas.width / 17
+  constructor({
+    position,
+    imageSrc,
+    velocity,
+    direction,
+    width,
+    height,
+    frameMax,
+    offset,
+    sprites,
+  }) {
+    super({ position, imageSrc, width, height, frameMax, offset })
     this.velocity = velocity
+    this.sprites = {}
+    Object.keys(sprites).map((key) => {
+      const image = new Image()
+      image.src = sprites[key].imageSrc
+      this.sprites[key] = {
+        ...sprites[key],
+        image: image,
+      }
+    })
     this.lastKey = null
     this.jumtTimes = 0
-    this.color = color
+    this.offset = offset
+    this.direction = direction
     this.attackBox = {
-      width: this.width * 2,
-      height: this.height / 2,
-      direction: direction,
+      width: canvas.width / 20,
+      height: this.height / 7,
       position: {
-        x: this.position.x + (position === 1 ? this.width : -this.width * 2),
-        y: this.position.y + this.height / 4,
+        x:
+          this.position.x +
+          (direction === 1 ? -this.width * 2 : -this.width * 2),
+        y: this.position.y + this.offset.y * 10 + this.height / 4,
       },
     }
     this.attackable = false
     this.attacking = false
     this.lifePoint = LIFE_POINT
-  }
-
-  draw() {
-    context.fillStyle = this.color
-    context.fillRect(this.position.x, this.position.y, this.width, this.height)
+    this.other = null
+    this.hit = false
   }
 
   attack(other) {
-    if (this.isAttacking) return
+    if (this.attacking) return
+    this.hit = false
+    this.currentFrame = 0
     this.attacking = true
-    if (this.attackable) {
-      other.lifePoint -= DAMAGE
-    }
-    setTimeout(() => {
-      this.attacking = false
-    }, 300)
+    this.other = other
   }
 
   update() {
+    if (this.attacking && this.currentFrame === this.frameMax - 1) {
+      this.attacking = false
+    }
+    if (
+      this.attacking &&
+      this.attackable &&
+      this.currentFrame === this.frameMax / 2 &&
+      this.other &&
+      !this.hit
+    ) {
+      this.other.lifePoint -= DAMAGE
+      this.hit = true
+    }
+
+    if (this.velocity.x === 0 && this.velocity.y === 0) {
+      this.image = this.sprites.idle.image
+      this.frameMax = this.sprites.idle.frameMax
+      this.width = this.sprites.idle.width
+    }
+    if (this.velocity.x !== 0 && this.velocity.y === 0) {
+      this.image = this.sprites.run.image
+      this.frameMax = this.sprites.run.frameMax
+      this.width = this.sprites.run.width
+    }
+    if (this.velocity.y > 0) {
+      this.image = this.sprites.jump.image
+      this.frameMax = this.sprites.jump.frameMax
+      this.width = this.sprites.jump.width
+    }
+    if (this.velocity.y < 0) {
+      this.image = this.sprites.fall.image
+      this.frameMax = this.sprites.fall.frameMax
+      this.width = this.sprites.fall.width
+    }
+    if (this.attacking) {
+      this.image = this.sprites.attack1.image
+      this.frameMax = this.sprites.attack1.frameMax
+      this.width = this.sprites.attack1.width
+    }
+    if (this.direction === 1) {
+      this.image.src = this.image.src.replace('-reverse', '')
+    } else {
+      this.image.src = this.image.src.replace('-reverse', '')
+      this.image.src = this.image.src.replace('.png', '-reverse.png')
+    }
+
     this.draw()
-    if (this.position.x + this.width + this.velocity.x >= canvas.width)
+    this.frameAnimation()
+    context.fillStyle = 'red'
+    context.fillRect(
+      this.attackBox.position.x,
+      this.attackBox.position.y,
+      this.attackBox.width,
+      this.attackBox.height
+    )
+    if (
+      this.position.x +
+        this.velocity.x -
+        this.offset.x * 2 +
+        this.width / this.frameMax >=
+      canvas.width
+    )
       this.velocity.x = 0
     if (this.position.x + this.velocity.x <= 0) this.velocity.x = 0
 
     this.position.y += this.velocity.y
     this.position.x += this.velocity.x
 
-    if (
-      this.position.y + this.height + this.velocity.y >=
-      canvas.height * 0.85
-    ) {
+    if (this.position.y + this.height + this.velocity.y >= canvas.height) {
       this.velocity.y = 0
       this.jumpTimes = 0
     } else {
@@ -100,7 +178,10 @@ class Player extends Sprite {
     }
     this.attackBox.position.x =
       this.position.x +
-      (this.attackBox.direction === 1 ? this.width : -this.attackBox.width)
-    this.attackBox.position.y = this.position.y + this.height / 4
+      (this.direction === 1
+        ? this.width / this.frameMax - this.offset.ax
+        : -this.attackBox.width)
+    this.attackBox.position.y =
+      this.position.y + this.offset.y + this.height / 2.5
   }
 }

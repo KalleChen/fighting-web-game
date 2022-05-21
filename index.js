@@ -21,30 +21,98 @@ const shop = new Sprite({
 
 const player = new Player({
   position: {
-    x: canvas.width / 17,
+    x: 0,
     y: 0,
   },
   velocity: {
     x: 0,
     y: 0,
   },
-  imageSrc: './img/shop.png',
-  color: 'red',
+  imageSrc: './img/samuraiMack/Idle.png',
+  width: canvas.width * 4,
+  height: canvas.height,
+  frameMax: 8,
   direction: 1,
+  offset: {
+    x: canvas.width * 0.22,
+    y: canvas.height * 0.22,
+    ax: canvas.width * 0.44,
+  },
+  sprites: {
+    idle: {
+      imageSrc: './img/samuraiMack/Idle.png',
+      frameMax: 8,
+      width: canvas.width * 4,
+    },
+    run: {
+      imageSrc: './img/samuraiMack/Run.png',
+      frameMax: 8,
+      width: canvas.width * 4,
+    },
+    jump: {
+      imageSrc: './img/samuraiMack/Jump.png',
+      frameMax: 2,
+      width: canvas.width,
+    },
+    fall: {
+      imageSrc: './img/samuraiMack/Fall.png',
+      frameMax: 2,
+      width: canvas.width,
+    },
+    attack1: {
+      imageSrc: './img/samuraiMack/Attack1.png',
+      frameMax: 6,
+      width: canvas.width * 3,
+    },
+  },
 })
 
 const enemy = new Player({
   position: {
-    x: (canvas.width / 17) * 15,
+    x: (canvas.width * 6) / 10,
     y: 0,
   },
   velocity: {
     x: 0,
     y: 0,
   },
-  imageSrc: './img/shop.png',
-  color: 'blue',
+  imageSrc: './img/kenji/Idle.png',
+  width: canvas.width * 2.5,
+  height: canvas.height,
+  frameMax: 4,
   direction: 0,
+  offset: {
+    x: canvas.width * 0.28,
+    y: canvas.height * 0.2,
+    ax: canvas.width * 0.55,
+  },
+  sprites: {
+    idle: {
+      imageSrc: './img/kenji/Idle.png',
+      frameMax: 4,
+      width: canvas.width * 2.5,
+    },
+    run: {
+      imageSrc: './img/kenji/Run.png',
+      frameMax: 8,
+      width: canvas.width * 5,
+    },
+    jump: {
+      imageSrc: './img/kenji/Jump.png',
+      frameMax: 2,
+      width: canvas.width * 1.25,
+    },
+    fall: {
+      imageSrc: './img/kenji/Fall.png',
+      frameMax: 2,
+      width: canvas.width * 1.25,
+    },
+    attack1: {
+      imageSrc: './img/kenji/Attack1.png',
+      frameMax: 4,
+      width: canvas.width * 2.5,
+    },
+  },
 })
 
 const animate = () => {
@@ -65,20 +133,20 @@ const animate = () => {
   // player movement
   if (keys.a.pressed && player.lastKey !== 'd') {
     player.velocity.x = -X_VELOCITY
-    player.attackBox.direction = 0
+    player.direction = 0
   } else if (keys.d.pressed && player.lastKey !== 'a') {
     player.velocity.x = X_VELOCITY
-    player.attackBox.direction = 1
+    player.direction = 1
   } else {
     player.velocity.x = 0
   }
   // enemy movement
   if (keys.ArrowLeft.pressed && enemy.lastKey !== 'ArrowRight') {
     enemy.velocity.x = -X_VELOCITY
-    enemy.attackBox.direction = 0
+    enemy.direction = 0
   } else if (keys.ArrowRight.pressed && enemy.lastKey !== 'ArrowLeft') {
     enemy.velocity.x = X_VELOCITY
-    enemy.attackBox.direction = 1
+    enemy.direction = 1
   } else {
     enemy.velocity.x = 0
   }
