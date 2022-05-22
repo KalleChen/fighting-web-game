@@ -174,22 +174,28 @@ const start = () => {
 
     // player movement
     if (keys.a.pressed && player.lastKey !== 'd') {
+      if (player.velocity.x !== -X_VELOCITY) player.currentFrame = 0
       player.velocity.x = -X_VELOCITY
       player.direction = 0
     } else if (keys.d.pressed && player.lastKey !== 'a') {
+      if (player.velocity.x !== X_VELOCITY) player.currentFrame = 0
       player.velocity.x = X_VELOCITY
       player.direction = 1
     } else {
+      if (player.velocity.x !== 0) player.currentFrame = 0
       player.velocity.x = 0
     }
     // enemy movement
     if (keys.ArrowLeft.pressed && enemy.lastKey !== 'ArrowRight') {
+      if (enemy.velocity.x !== -X_VELOCITY) enemy.currentFrame = 0
       enemy.velocity.x = -X_VELOCITY
       enemy.direction = 0
     } else if (keys.ArrowRight.pressed && enemy.lastKey !== 'ArrowLeft') {
+      if (enemy.velocity.x !== X_VELOCITY) enemy.currentFrame = 0
       enemy.velocity.x = X_VELOCITY
       enemy.direction = 1
     } else {
+      if (enemy.velocity.x !== 0) enemy.currentFrame = 0
       enemy.velocity.x = 0
     }
 
@@ -221,6 +227,7 @@ const start = () => {
         break
       case 'w':
         if (player.jumpTimes < 2) {
+          if (player.velocity.y !== Y_VELOCITY) player.currentFrame = 0
           player.velocity.y = Y_VELOCITY
           player.jumpTimes++
         }
@@ -238,6 +245,7 @@ const start = () => {
         break
       case 'ArrowUp':
         if (enemy.jumpTimes < 2) {
+          if (enemy.velocity.y !== Y_VELOCITY) enemy.currentFrame = 0
           enemy.velocity.y = Y_VELOCITY
           enemy.jumpTimes++
         }

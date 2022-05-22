@@ -67,9 +67,12 @@ class Player extends Sprite {
     Object.keys(sprites).map((key) => {
       const image = new Image()
       image.src = sprites[key].imageSrc
+      const reverseImage = new Image()
+      reverseImage.src = sprites[key].imageSrc.replace('.png', '-reverse.png')
       this.sprites[key] = {
         ...sprites[key],
         image: image,
+        reverseImage: reverseImage,
       }
     })
     this.lastKey = null
@@ -156,40 +159,39 @@ class Player extends Sprite {
     }
 
     if (this.velocity.x === 0 && this.velocity.y === 0) {
-      this.image = this.sprites.idle.image
+      this.image = this.sprites.idle
       this.frameMax = this.sprites.idle.frameMax
       this.width = this.sprites.idle.width
     }
     if (this.velocity.x !== 0 && this.velocity.y === 0) {
-      this.image = this.sprites.run.image
+      this.image = this.sprites.run
       this.frameMax = this.sprites.run.frameMax
       this.width = this.sprites.run.width
     }
     if (this.velocity.y > 0) {
-      this.image = this.sprites.jump.image
+      this.image = this.sprites.jump
       this.frameMax = this.sprites.jump.frameMax
       this.width = this.sprites.jump.width
     }
     if (this.velocity.y < 0) {
-      this.image = this.sprites.fall.image
+      this.image = this.sprites.fall
       this.frameMax = this.sprites.fall.frameMax
       this.width = this.sprites.fall.width
     }
     if (this.attacking) {
-      this.image = this.sprites.attack1.image
+      this.image = this.sprites.attack1
       this.frameMax = this.sprites.attack1.frameMax
       this.width = this.sprites.attack1.width
     }
     if (this.takeHit) {
-      this.image = this.sprites.takeHit.image
+      this.image = this.sprites.takeHit
       this.frameMax = this.sprites.takeHit.frameMax
       this.width = this.sprites.takeHit.width
     }
     if (this.direction === 1) {
-      this.image.src = this.image.src.replace('-reverse', '')
+      this.image = this.image.image
     } else {
-      this.image.src = this.image.src.replace('-reverse', '')
-      this.image.src = this.image.src.replace('.png', '-reverse.png')
+      this.image = this.image.reverseImage
     }
 
     this.draw()
