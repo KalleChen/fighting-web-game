@@ -64,10 +64,15 @@ const player = new Player({
       frameMax: 6,
       width: canvas.width * 3,
     },
-    hit: {
+    takeHit: {
       imageSrc: './img/samuraiMack/Take-Hit.png',
       frameMax: 4,
       width: canvas.width * 2,
+    },
+    death: {
+      imageSrc: './img/samuraiMack/Death.png',
+      frameMax: 6,
+      width: canvas.width * 3,
     },
   },
 })
@@ -116,6 +121,16 @@ const enemy = new Player({
       imageSrc: './img/kenji/Attack1.png',
       frameMax: 4,
       width: canvas.width * 2.5,
+    },
+    takeHit: {
+      imageSrc: './img/kenji/Take-Hit.png',
+      frameMax: 3,
+      width: canvas.width * 1.875,
+    },
+    death: {
+      imageSrc: './img/kenji/Death.png',
+      frameMax: 7,
+      width: canvas.width * 4.375,
     },
   },
 })

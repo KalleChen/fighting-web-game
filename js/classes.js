@@ -99,19 +99,39 @@ class Player extends Sprite {
     this.lifePoint = LIFE_POINT
     this.other = null
     this.hit = false
+    this.takeHit = false
   }
 
   attack(other) {
-    if (this.attacking) return
+    if (this.attacking || this.isDead) return
     this.hit = false
     this.currentFrame = 0
     this.attacking = true
     this.other = other
+    this.isDead = false
   }
 
   update() {
+    if (this.lifePoint <= 0 && !this.isDead) {
+      this.isDead = true
+      this.currentFrame = 0
+      this.image = this.sprites.death.image
+      this.frameMax = this.sprites.death.frameMax
+      this.width = this.sprites.death.width
+    }
+    if (this.isDead) {
+      if (this.currentFrame === this.frameMax - 1) {
+        this.currentFrame -= 1
+      }
+      this.draw()
+      this.frameAnimation()
+      return
+    }
     if (this.attacking && this.currentFrame === this.frameMax - 1) {
       this.attacking = false
+    }
+    if (this.takeHit && this.currentFrame === this.frameMax - 1) {
+      this.takeHit = false
     }
     if (
       this.attacking &&
@@ -124,6 +144,8 @@ class Player extends Sprite {
       if (this.other.direction === this.direction)
         this.other.lifePoint -= DAMAGE
       this.hit = true
+      this.other.takeHit = true
+      this.other.currentFrame = 0
     }
 
     if (this.velocity.x === 0 && this.velocity.y === 0) {
@@ -150,6 +172,11 @@ class Player extends Sprite {
       this.image = this.sprites.attack1.image
       this.frameMax = this.sprites.attack1.frameMax
       this.width = this.sprites.attack1.width
+    }
+    if (this.takeHit) {
+      this.image = this.sprites.takeHit.image
+      this.frameMax = this.sprites.takeHit.frameMax
+      this.width = this.sprites.takeHit.width
     }
     if (this.direction === 1) {
       this.image.src = this.image.src.replace('-reverse', '')
