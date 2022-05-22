@@ -21,7 +21,7 @@ const shop = new Sprite({
 
 const player = new Player({
   position: {
-    x: 0,
+    x: canvas.width / 10,
     y: 0,
   },
   velocity: {
@@ -64,12 +64,17 @@ const player = new Player({
       frameMax: 6,
       width: canvas.width * 3,
     },
+    hit: {
+      imageSrc: './img/samuraiMack/Take-Hit.png',
+      frameMax: 4,
+      width: canvas.width * 2,
+    },
   },
 })
 
 const enemy = new Player({
   position: {
-    x: (canvas.width * 6) / 10,
+    x: (canvas.width * 8) / 10,
     y: 0,
   },
   velocity: {
@@ -115,7 +120,7 @@ const enemy = new Player({
   },
 })
 
-const animate = () => {
+const animate = async () => {
   const animationId = window.requestAnimationFrame(animate)
   context.fillStyle = 'black'
   context.fillRect(0, 0, canvas.width, canvas.height)
@@ -163,9 +168,6 @@ const animate = () => {
     enemy.attackable = false
   }
   checkEnd(player, enemy)
-  if (end) {
-    window.cancelAnimationFrame(animationId)
-  }
 }
 
 animate()

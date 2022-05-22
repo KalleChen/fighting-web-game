@@ -29,11 +29,13 @@ const keys = {
 
 const checkAttackRange = (p1, p2) => {
   const XValid =
-    (p1.attackBox.position.x <= p2.position.x &&
-      p1.attackBox.position.x + p1.attackBox.width >= p2.position.x) ||
-    (p1.attackBox.position.x <= p2.position.x + p2.width &&
-      p1.attackBox.position.x + p1.attackBox.width >= p2.position.x + p2.width)
-  const YValid = p1.attackBox.position.y + p1.attackBox.height >= p2.position.y
+    (p1.attackBox.position.x <= p2.body.position.x &&
+      p1.attackBox.position.x + p1.attackBox.width >= p2.body.position.x) ||
+    (p1.attackBox.position.x <= p2.body.position.x + p2.body.width &&
+      p1.attackBox.position.x + p1.attackBox.width >=
+        p2.body.position.x + p2.body.width)
+  const YValid =
+    p1.attackBox.position.y + p1.attackBox.height >= p2.body.position.y
   return XValid && YValid
 }
 
@@ -64,4 +66,8 @@ const checkEnd = (p1, p2) => {
   } else {
     end = false
   }
+}
+
+function delay(time) {
+  return new Promise((resolve) => setTimeout(resolve, time))
 }

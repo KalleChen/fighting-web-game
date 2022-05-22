@@ -77,13 +77,21 @@ class Player extends Sprite {
     this.offset = offset
     this.direction = direction
     this.attackBox = {
-      width: canvas.width / 20,
+      width: canvas.width / 5,
       height: this.height / 7,
       position: {
         x:
           this.position.x +
           (direction === 1 ? -this.width * 2 : -this.width * 2),
         y: this.position.y + this.offset.y * 10 + this.height / 4,
+      },
+    }
+    this.body = {
+      width: canvas.width / 19,
+      height: this.height / 4,
+      position: {
+        x: this.position.x,
+        y: this.position.y,
       },
     }
     this.attackable = false
@@ -108,11 +116,13 @@ class Player extends Sprite {
     if (
       this.attacking &&
       this.attackable &&
-      this.currentFrame === this.frameMax / 2 &&
+      Math.abs(this.currentFrame - this.frameMax / 2) <= 1 &&
       this.other &&
       !this.hit
     ) {
       this.other.lifePoint -= DAMAGE
+      if (this.other.direction === this.direction)
+        this.other.lifePoint -= DAMAGE
       this.hit = true
     }
 
@@ -150,13 +160,6 @@ class Player extends Sprite {
 
     this.draw()
     this.frameAnimation()
-    context.fillStyle = 'red'
-    context.fillRect(
-      this.attackBox.position.x,
-      this.attackBox.position.y,
-      this.attackBox.width,
-      this.attackBox.height
-    )
     if (
       this.position.x +
         this.velocity.x -
@@ -183,5 +186,7 @@ class Player extends Sprite {
         : -this.attackBox.width)
     this.attackBox.position.y =
       this.position.y + this.offset.y + this.height / 2.5
+    this.body.position.x = this.position.x
+    this.body.position.y = this.position.y + this.offset.y + this.height / 2.5
   }
 }
