@@ -3,6 +3,12 @@
   <head>
     <title>Fighting Game</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@1&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div style="100vw;100vh;position:relative;">
@@ -15,7 +21,29 @@
           <div id="right_life" class="life"></div>
         </div>
       </div>
-      <div id="result_block" class="result_block"></div>
+      <div id="start_block" class="info_block">
+        <button id="start_button" class="button" onclick="start()">
+          Start
+        </button>
+      </div>
+      <div id="result_block" class="info_block" style="display: none">
+        <span id="result_text"></span>
+        <button id="start_button" class="button" onclick="start()">
+          Restart
+        </button>
+      </div>
+      <div class="help_button" onclick="help()">?</div>
+      <div id="help_block" class="info_block help_block">
+        <div class="rule_block">
+          You make double damage to the enemy if you hit him from his back.
+          <img width="350" src="./img/hitback.png" style="margin-top: 30" />
+        </div>
+        <div class="rule_block">
+          You can make second jump in the air.
+          <img width="350" src="./img/jump.png" style="margin-top: 30" />
+        </div>
+        <div class="close_button" onclick="closeHelp()">X</div>
+      </div>
       <canvas> </canvas>
     </div>
     <script

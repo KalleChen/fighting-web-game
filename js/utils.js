@@ -5,6 +5,7 @@ const X_VELOCITY = 8
 const Y_VELOCITY = -20
 const LIFE_POINT = 10
 const DAMAGE = 1
+const DEFAULT_TIME = 90
 
 // Setup canvas
 canvas.width = window.innerWidth
@@ -42,32 +43,45 @@ const checkAttackRange = (p1, p2) => {
 let end = false
 
 // time
-let time = 90
+let timeoutId = null
+let time = DEFAULT_TIME
 const decreaseTime = () => {
   if (time < 0 || end) return
   document.getElementById('time_block').innerHTML = time
-  setTimeout(decreaseTime, 1000)
+  timeoutId = setTimeout(decreaseTime, 1000)
   time--
 }
-decreaseTime()
 
 // end
 const checkEnd = (p1, p2) => {
   const resultBlock = document.getElementById('result_block')
+  const resultText = document.getElementById('result_text')
   if (p1.lifePoint <= 0) {
-    resultBlock.innerHTML = 'Player 2 Win'
+    resultText.innerHTML = 'Player 2 Win'
     end = true
   } else if (p2.lifePoint <= 0) {
-    resultBlock.innerHTML = 'Player 1 Win'
+    resultText.innerHTML = 'Player 1 Win'
     end = true
   } else if (time < 0) {
-    resultBlock.innerHTML = 'Time Out'
+    resultText.innerHTML = 'Time Out'
     end = true
   } else {
     end = false
+  }
+  if (end) {
+    resultBlock.style.display = 'flex'
   }
 }
 
 function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time))
+}
+
+const help = () => {
+  document.getElementById('help_block').style.display = 'flex'
+}
+
+const closeHelp = () => {
+  document.getElementById('help_block').style.display = 'none'
+  start()
 }

@@ -103,7 +103,7 @@ class Player extends Sprite {
   }
 
   attack(other) {
-    if (this.attacking || this.isDead) return
+    if (this.attacking || this.isDead || other.isDead) return
     this.hit = false
     this.currentFrame = 0
     this.attacking = true
@@ -122,6 +122,13 @@ class Player extends Sprite {
     if (this.isDead) {
       if (this.currentFrame === this.frameMax - 1) {
         this.currentFrame -= 1
+      }
+      this.position.y += this.velocity.y
+      if (this.position.y + this.height + this.velocity.y >= canvas.height) {
+        this.velocity.y = 0
+        this.jumpTimes = 0
+      } else {
+        this.velocity.y += GRAVITY
       }
       this.draw()
       this.frameAnimation()

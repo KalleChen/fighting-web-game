@@ -3,6 +3,7 @@ body {
   border: 0;
   margin: 0;
   padding: 0;
+  font-family: 'Roboto Mono', monospace;
 }
 
 div {
@@ -54,7 +55,7 @@ div {
   font-size: 4em;
 }
 
-.result_block {
+.info_block {
   position: absolute;
   width: 100vw;
   height: 100vh;
@@ -66,4 +67,58 @@ div {
   background-color: transparent;
   color: white;
   font-size: 4em;
+  font-family: 'Roboto Mono', monospace;
+  flex-direction: column;
+}
+
+.button {
+  width: 400px;
+  height: 100px;
+  background-color: transparent;
+  border: 0;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.help_button {
+  position: absolute;
+  bottom: 30;
+  right: 50;
+  background-color: transparent;
+  border: 0;
+  color: white;
+  font-size: 2em;
+  cursor: pointer;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.help_block {
+  background-color: rgba(0, 0, 0, 0.5);
+  flex-direction: row;
+  justify-content: center;
+  display: none;
+}
+
+.close_button {
+  position: absolute;
+  top: 50;
+  right: 50;
+  background-color: transparent;
+  border: 0;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.rule_block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.3em;
+  max-width: 350;
+  margin: 75;
 }
